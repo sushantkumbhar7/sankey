@@ -1,5 +1,5 @@
-from .models import registration
-from .serializers import registerSerializer,showSerializer
+from .models import registration,addfurniture
+from .serializers import registerSerializer,showSerializer,addfurnitureSerializer
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
@@ -13,8 +13,7 @@ def signup(request):
         serializer = registerSerializer(registration(),request.data)
         if(serializer.is_valid()):
             serializer.save()
-            return Response({'registered success':200})
- 
+            return Response({'status':200})
         return Response({'Data Is Not Accepted':406,'error':serializer.errors})   
           
     
@@ -38,7 +37,23 @@ def login(request):
         return Response({'status':202,'Data':serializer.data})
     except:
         return Response({'Enter Valid Credentials':401})
-        
 
 
 
+@api_view(['POST'])
+def addf(request):
+    if request.method=='POST':
+        serializer = addfurnitureSerializer(addfurniture(),request.data)
+        if(serializer.is_valid()):
+            serializer.save()
+            return Response({'status':202})
+ 
+        return Response({'Data Is Not Accepted':406,'error':serializer.errors})  
+
+@api_view(['GET'])
+def Show_fur(request):
+    if request.method=='GET':
+        ress=addfurniture.objects.all()
+        print(ress)
+        serializer=addfurnitureSerializer(ress,many=True)
+        return Response({'status':200,'Details':serializer.data})
